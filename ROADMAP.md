@@ -43,14 +43,15 @@ This is a roadmap, not a claim that the tasks below have been implemented or val
 - [ ] Replace the legacy `youtube` default replacement (`<iframe width="560" height="315" ...>`) in `sql/mysql_install.php` with the following responsive, click-to-play, privacy-enhanced embed.
 - [ ] Preserve the `#1` parameter substitution used in `[youtube:video_id]` and confirm it is restricted to a valid YouTube video ID before insertion into HTML/URLs.
 - [ ] Make installation/upgrade behavior explicit: **new installations** receive the new default; **existing records** must not be unconditionally overwritten during upgrade because users may have customized their `youtube` autotag. Offer a documented opt-in migration or update only when the stored replacement matches the historical default exactly, with backup and tests.
+- [ ] Preserve the revised explicit `rgb()` / `rgba()` colors when storing, filtering, editing and rendering the embed; check whether Geeklog's HTML sanitizer modifies color syntax.
 - [ ] Test that the generated `srcdoc` survives SQL/PHP quoting, Geeklog autotag replacement, form editing and saving, and HTML rendering; validate iframe `allow` / autoplay, referrer policy, keyboard activation, privacy and fallbacks with appropriate CSP.
 - [ ] Check thumbnail request behavior (`img.youtube.com` is contacted before interaction), caching/SEO and accessibility. Privacy-enhanced `youtube-nocookie.com` only applies after the user activates playback.
 - [ ] Check localization of the iframe title and the play link's accessible label if a localized default is required; do not hard-code theme-specific dependencies.
 
-Proposed default replacement (adapted from the editorially supplied HTML, subject to functional verification):
+Updated default replacement supplied after resolving a rendering issue (use explicit `rgb()` / `rgba()` color values in place of compact hex colors; subject to functional verification):
 
 ```html
-<div style="position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:#000;">
+<div style="position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:rgb(0,0,0);">
   <iframe
     title="Lecteur vidéo YouTube"
     loading="lazy"
@@ -61,7 +62,7 @@ Proposed default replacement (adapted from the editorially supplied HTML, subjec
     srcdoc="
       <style>
         *{box-sizing:border-box}
-        html,body{margin:0;width:100%;height:100%;background:#000}
+        html,body{margin:0;width:100%;height:100%;background:rgb(0,0,0)}
         a{display:block;position:relative;width:100%;height:100%;overflow:hidden}
         .thumb{width:100%;height:100%;object-fit:cover}
         .play{
@@ -70,11 +71,12 @@ Proposed default replacement (adapted from the editorially supplied HTML, subjec
           display:grid;place-items:center;
           width:68px;height:48px;
           border-radius:12px;
-          background:#c00;color:#fff;
-          box-shadow:0 2px 12px #0008;
+          background:rgb(204,0,0);
+          color:rgb(255,255,255);
+          box-shadow:0 2px 12px rgba(0,0,0,.53);
           font:32px Arial,sans-serif;
         }
-        a:hover .play,a:focus-visible .play{background:#e00}
+        a:hover .play,a:focus-visible .play{background:rgb(238,0,0)}
         a:focus-visible{outline:3px solid white;outline-offset:-3px}
       </style>
       <a href='https://www.youtube-nocookie.com/embed/#1?autoplay=1'
