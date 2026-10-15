@@ -38,6 +38,59 @@ This is a roadmap, not a claim that the tasks below have been implemented or val
 
 **Acceptance:** backed-up legacy installation upgrades successfully; all autotags remain usable; plugin metadata matches the running code; no critical security regressions.
 
+## P1 — Modernize built-in YouTube autotag
+
+- [ ] Replace the legacy `youtube` default replacement (`<iframe width="560" height="315" ...>`) in `sql/mysql_install.php` with the following responsive, click-to-play, privacy-enhanced embed.
+- [ ] Preserve the `#1` parameter substitution used in `[youtube:video_id]` and confirm it is restricted to a valid YouTube video ID before insertion into HTML/URLs.
+- [ ] Make installation/upgrade behavior explicit: **new installations** receive the new default; **existing records** must not be unconditionally overwritten during upgrade because users may have customized their `youtube` autotag. Offer a documented opt-in migration or update only when the stored replacement matches the historical default exactly, with backup and tests.
+- [ ] Test that the generated `srcdoc` survives SQL/PHP quoting, Geeklog autotag replacement, form editing and saving, and HTML rendering; validate iframe `allow` / autoplay, referrer policy, keyboard activation, privacy and fallbacks with appropriate CSP.
+- [ ] Check thumbnail request behavior (`img.youtube.com` is contacted before interaction), caching/SEO and accessibility. Privacy-enhanced `youtube-nocookie.com` only applies after the user activates playback.
+- [ ] Check localization of the iframe title and the play link's accessible label if a localized default is required; do not hard-code theme-specific dependencies.
+
+Proposed default replacement (adapted from the editorially supplied HTML, subject to functional verification):
+
+```html
+<div style="position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:#000;">
+  <iframe
+    title="Lecteur vidéo YouTube"
+    loading="lazy"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen
+    style="position:absolute;inset:0;width:100%;height:100%;border:0;"
+    srcdoc="
+      <style>
+        *{box-sizing:border-box}
+        html,body{margin:0;width:100%;height:100%;background:#000}
+        a{display:block;position:relative;width:100%;height:100%;overflow:hidden}
+        .thumb{width:100%;height:100%;object-fit:cover}
+        .play{
+          position:absolute;top:50%;left:50%;
+          transform:translate(-50%,-50%);
+          display:grid;place-items:center;
+          width:68px;height:48px;
+          border-radius:12px;
+          background:#c00;color:#fff;
+          box-shadow:0 2px 12px #0008;
+          font:32px Arial,sans-serif;
+        }
+        a:hover .play,a:focus-visible .play{background:#e00}
+        a:focus-visible{outline:3px solid white;outline-offset:-3px}
+      </style>
+      <a href='https://www.youtube-nocookie.com/embed/#1?autoplay=1'
+         aria-label='Lire la vidéo YouTube'>
+        <img class='thumb'
+             src='https://img.youtube.com/vi/#1/hqdefault.jpg'
+             alt=''>
+        <span class='play' aria-hidden='true'>&#9654;</span>
+      </a>
+    "
+  ></iframe>
+</div>
+```
+
+**Acceptance:** responsive 16:9 thumbnail, click-to-play, unique replacement of `#1`, accessible activation, no unintended rewrites of customized records and no theme-specific workaround.
+
 ## P2 — Internationalization, documentation and release
 
 - [ ] Audit language files for missing/unused keys and placeholder parity; keep UTF-8 intact. Prioritize English and French and document other shipped languages.
@@ -50,7 +103,7 @@ This is a roadmap, not a claim that the tasks below have been implemented or val
 
 1. Capture reproducible failures and fix form IDs/labels at source.
 2. Validate legacy upgrade and editor CRUD/security.
-3. Modernize admin UI and re-test with default + Eclipse.
+3. Modernize admin UI and built-in YouTube embed; re-test with default + Eclipse.
 4. Complete PHP compatibility, translations, documentation, automated checks.
 5. Review diff, verify upgrades, then prepare PR and release notes.
 
