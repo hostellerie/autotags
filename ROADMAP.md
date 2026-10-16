@@ -93,6 +93,48 @@ Updated default replacement supplied after resolving a rendering issue (use expl
 
 **Acceptance:** responsive 16:9 thumbnail, click-to-play, unique replacement of `#1`, accessible activation, no unintended rewrites of customized records and no theme-specific workaround.
 
+## Post-1.2.0 vision — Unified autotag discovery and insertion
+
+Autotags should be the **single, read-only discovery catalogue for tags owned by Geeklog Core and other installed plugins**, while remaining the editor for its **own** custom tags. Do not duplicate other plugins' capabilities. MediaGallery's existing Forum media-picker flow is a useful UX reference: pick an authorized item, then insert the correct syntax automatically. Reuse or interoperate with existing picker integrations rather than writing a parallel MediaGallery browser.
+
+### 1.3.0 — User-facing picker and guided insertion
+
+- [ ] Provide a consistent "Insert autotag" control for supported article, static-page, Forum and comment editors and submission forms; begin with a feasibility survey of each editor type, including simple textareas and CKEditor.
+- [ ] Search/filter the unified catalogue by name, description, provider, category, allowed context and permission; show the exact syntax plus a copy option where direct insertion is unavailable.
+- [ ] Supply contextual forms from optional provider metadata (e.g., paste a YouTube URL; select an album via MediaGallery's picker); generate valid syntax and insert at the caret, preserving selection and drafts.
+- [ ] Show only available/usable autotags to the current user; respect owner-specific selection and visibility (e.g., MediaGallery albums belonging to, or otherwise visible to, the user), and enforce permissions again server-side.
+- [ ] Keep interoperability with existing Forum/MediaGallery media insertion; do not replace that navigator or introduce duplicate buttons without an integration plan.
+
+### 1.4.0 — Administration, previews and history
+
+- [ ] Add a unified catalogue of **Core, third-party plugin and custom Autotags** with source/provider, enabled/available status, description, syntax, examples, permissions and dependencies.
+- [ ] Read-only entries for Core/third-party tags (never edit their definitions through this plugin); only Autotags-owned definitions are editable here.
+- [ ] Detect **exact name collisions** before creation/save, with clear owner identification and a choice to cancel or rename; audit normalization/case-sensitivity and how Geeklog actually resolves duplicate providers. Do not claim automated semantic equivalence: optionally suggest similar purposes using descriptions and manual review.
+- [ ] Add **safe preview** for tags where allowed: prefer declared static example/thumbnail or an opt-in provider preview API. Do **not** blindly execute arbitrary tag PHP, remote embeds, side effects or permission-sensitive content in the admin catalogue; sandbox or isolate render previews and offer safe fallback where unsupported.
+- [ ] Add categories, duplication of custom definitions, import/export with conflict checks, and version history/rollback for locally managed autotags only.
+
+### 1.5.0 — Provider metadata and plugin integration
+
+- [ ] Investigate Geeklog Core tag-discovery APIs and plugin_autotags hooks, including `tagname`, `description`, `permission`, `nopermission` and `closetag`; distinguish dynamically registered providers from database-defined tags. Do not assume all plugins expose richer schemas or preview support.
+- [ ] Define an **optional backwards-compatible metadata contract**, initially a local adapter, for provider name, category, help text, syntax, sample data, input schema, picker callback, preview capability and context constraints.
+- [ ] Prototype opt-in adapters for MediaGallery, Downloads, Documents, Videos/Radio, FAQ and Hub; integrate with their canonical selectors and APIs, without moving their business logic into Autotags.
+- [ ] Avoid arbitrary include/execute scans to discover tags; respect plugin activation, current-user visibility, provider ordering, caching and cache invalidation when plugins are enabled/disabled.
+- [ ] Document ownership boundaries: Core parses and routes; providers own semantics and data; Autotags owns its custom definitions and the shared discovery/insertion UX.
+
+### 2.0.0 — Optional advanced syntax (research only)
+
+- [ ] Study named parameters, reusable editorial components and richer dynamic tags, conditioned on **Core parser compatibility**. Preserve existing positional `#1`, `#2`, `#3` and current syntax; avoid a conflicting second parser.
+
+### Cross-version acceptance and test matrix
+
+- [ ] Test discovery with no extra plugins, one third-party provider, multiple providers, deactivated providers and colliding names.
+- [ ] Verify that catalogue read-only entries are never mutated and that old enabled custom tags continue rendering unchanged.
+- [ ] Check admin versus contributor visibility, editor contexts, Forum/MediaGallery ownership permissions, malicious input, and previews that cannot execute privileged PHP or network actions implicitly.
+- [ ] Check mobile, keyboard, screen readers, translations and compatibility with default and Eclipse themes.
+- [ ] Measure performance with many providers/tags and ensure catalogue cache invalidation behaves correctly.
+
+**Implementation boundary:** 1.2.0 remains focused on reliability, security, admin fixes and the YouTube tag. New catalogue, insertion, preview and metadata features are **planned only** for later milestones; numbering is provisional.
+
 ## P2 — Internationalization, documentation and release
 
 - [ ] Audit language files for missing/unused keys and placeholder parity; keep UTF-8 intact. Prioritize English and French and document other shipped languages.
