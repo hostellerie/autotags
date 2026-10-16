@@ -113,6 +113,23 @@ Autotags should be the **single, read-only discovery catalogue for tags owned by
 - [ ] Add **safe preview** for tags where allowed: prefer declared static example/thumbnail or an opt-in provider preview API. Do **not** blindly execute arbitrary tag PHP, remote embeds, side effects or permission-sensitive content in the admin catalogue; sandbox or isolate render previews and offer safe fallback where unsupported.
 - [ ] Add categories, duplication of custom definitions, import/export with conflict checks, and version history/rollback for locally managed autotags only.
 
+### 1.4.0 — Autotag usage inventory and editorial impact analysis
+
+- [ ] Add a **"Where is this autotag used?"** action for any discovered autotag (custom, Core or third-party); show a list of matching content items with title, content type, status, last-modified date, occurrence count, public-view link and authorized direct-edit link.
+- [ ] Inventory uses in Geeklog stories, static pages, article submissions and comments first; extend to Forum posts, FAQ, Documents and other plugin-managed content through **opt-in provider adapters**, rather than guessing database schemas or scanning every table.
+- [ ] Include draft, pending, published, archived and disabled content when supported, with explicit filters and permission-aware visibility. Show counts per type, number of distinct content items, total occurrences, and optionally the last detected use. Distinguish **stored references** from actual front-end renderings; neither is traffic or view analytics.
+- [ ] Add a filterable/searchable detail view for one autotag: content title, source, contextual snippet (escaped), exact matched syntax, link to content, and **edit** action only when the current user has the target plugin's edit permission.
+- [ ] Support navigation to the target editor (or provider-supplied edit URL) without granting editing rights through Autotags. Never expose private/draft content metadata to unauthorized users; separate admin-level inventory privileges from public insertion privileges.
+- [ ] Provide collision/migration impact warnings: before disabling, renaming or deleting a custom autotag, present its detected usages and links, with clear warning that incomplete coverage is possible. Never silently rewrite source content.
+- [ ] Define a safe scanner/parser that recognizes genuine bracketed autotag syntax in stored source (with parameters and closing tags) while minimizing false positives in code examples, escaped text and similar names. Analyze how Geeklog Core handles nesting, case, encoding and tags. Document detection limits explicitly.
+- [ ] Design an incremental, resumable index: initial batch scan (cron/CLI or paginated admin run), provider-assisted updates on save/delete where reliable, periodic reconciliation and manual **reindex**. Avoid full database scans on every admin page or front-end request.
+- [ ] Add audit metadata: scan status, last indexed timestamp, per-provider coverage, incomplete/failed scans and stale results. Counts must never be represented as exhaustive when providers are unsupported or index freshness is unknown.
+- [ ] Benchmark on large content databases; avoid retaining full content copies in the usage index. Respect multisite boundaries, each site's database prefix, SQL safety, and content lifecycle.
+- [ ] Offer CSV export of permitted usage metadata and a **"possibly unused autotags"** view, clearly marked as provisional until full supported-provider coverage is achieved.
+- [ ] Keep this module separate from visitor/traffic analytics. Usage statistics count references in content, not views/clicks.
+
+**Acceptance:** an administrator can open an autotag's usage list, filter by article/static page/comment/provider, inspect counts, and navigate directly to an authorized edit screen. Disabled, draft and pending content are handled correctly. Security checks are performed by the owning plugin. Missing adapters and stale index data are visible, not concealed.
+
 ### 1.5.0 — Provider metadata and plugin integration
 
 - [ ] Investigate Geeklog Core tag-discovery APIs and plugin_autotags hooks, including `tagname`, `description`, `permission`, `nopermission` and `closetag`; distinguish dynamically registered providers from database-defined tags. Do not assume all plugins expose richer schemas or preview support.
@@ -132,6 +149,7 @@ Autotags should be the **single, read-only discovery catalogue for tags owned by
 - [ ] Check admin versus contributor visibility, editor contexts, Forum/MediaGallery ownership permissions, malicious input, and previews that cannot execute privileged PHP or network actions implicitly.
 - [ ] Check mobile, keyboard, screen readers, translations and compatibility with default and Eclipse themes.
 - [ ] Measure performance with many providers/tags and ensure catalogue cache invalidation behaves correctly.
+- [ ] Verify indexed usage counts against hand-checked stories, static pages and comments; test duplicate mentions, escaped examples, restricted items, renames and deletions.
 
 **Implementation boundary:** 1.2.0 remains focused on reliability, security, admin fixes and the YouTube tag. New catalogue, insertion, preview and metadata features are **planned only** for later milestones; numbering is provisional.
 
