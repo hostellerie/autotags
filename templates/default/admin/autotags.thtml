@@ -2,29 +2,29 @@
 <form action="{site_admin_url}/plugins/autotags/index.php" method="post">
     <table border="0" cellspacing="0" cellpadding="3" width="100%">
       <tr>
-          <td align="right" valign="top" style="white-space:nowrap;">{lang_tag}:</td>
-          <td><input type="text" size="24" maxlength="24" name="tag" value="{tag}"></td>
+          <td align="right" valign="top" style="white-space:nowrap;"><label for="autotags-tag">{lang_tag}:</label></td>
+          <td><input type="text" size="24" maxlength="24" name="tag" id="autotags-tag" value="{tag}"></td>
       </tr>
       <tr>
-          <td align="right" valign="top" style="white-space:nowrap;">{lang_desc}:</td>
-          <td><input type="text" name="description" size="75" maxlength="255" value="{description}"></td>
+          <td align="right" valign="top" style="white-space:nowrap;"><label for="autotags-description">{lang_desc}:</label></td>
+          <td><input type="text" name="description" id="autotags-description" size="75" maxlength="255" value="{description}"></td>
       </tr>
       <tr>
-          <td align="right" valign="top" style="white-space:nowrap;">{lang_enabled}</td>
-          <td><input type="checkbox" name="is_enabled" {is_enabled_checked}></td>
+          <td align="right" valign="top" style="white-space:nowrap;"><label for="autotags-enabled">{lang_enabled}</label></td>
+          <td><input type="checkbox" name="is_enabled" id="autotags-enabled" {is_enabled_checked}></td>
       </tr>
       <tr>
-          <td align="right" valign="top" style="white-space:nowrap;">{lang_close_tag}</td>
-          <td><input type="checkbox" name="close_tag" {close_tag_checked}></td>
+          <td align="right" valign="top" style="white-space:nowrap;"><label for="autotags-close-tag">{lang_close_tag}</label></td>
+          <td><input type="checkbox" name="close_tag" id="autotags-close-tag" {close_tag_checked}></td>
       </tr>
       
       <tr>
-          <td align="right" valign="top" style="white-space:nowrap;">{lang_function}</td>
+          <td align="right" valign="top" style="white-space:nowrap;"><label for="autotags-function">{lang_function}</label></td>
           <td>
             <table border="0">
                 <tr>
                     {!if is_function_checkbox}
-                    <td valign="top"><input type="checkbox" name="is_function" {is_function_checked}{xhtml}>&nbsp;&nbsp;</td>
+                    <td valign="top"><input type="checkbox" name="is_function" id="autotags-function" {is_function_checked}{xhtml}>&nbsp;&nbsp;</td>
                     {!endif}          
                     <td>{php_msg}</td>
                 </tr>
@@ -32,9 +32,9 @@
           </td>
       </tr>
       <tr>
-          <td align="right" valign="top" style="white-space:nowrap;">{lang_replacement}:</td>
+          <td align="right" valign="top" style="white-space:nowrap;"><label for="autotags-replacement">{lang_replacement}:</label></td>
           <td>
-              <textarea name="replacement" style="width:100%" rows="8" wrap="virtual">{replacement}</textarea>
+              <textarea name="replacement" id="autotags-replacement" style="width:100%" rows="8" wrap="virtual">{replacement}</textarea>
               {lang_replace_explain}
           </td>
       </tr>
