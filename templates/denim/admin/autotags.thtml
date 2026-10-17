@@ -2,6 +2,7 @@
 
 {start_block_editor}
 <form action="{site_admin_url}/plugins/autotags/index.php" method="post" id="autotags-autotageditor" class="compact uk-form">
+    <input type="hidden" name="gl_token" value="{security_token}">
     <div class="admin_basic">
         <dl class="form_block">
             <dt><label for="autotags-autotageditor-tag">{lang_tag}</label></dt>
