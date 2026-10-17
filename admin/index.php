@@ -66,6 +66,7 @@ function form($A, $error = false)
     } else {
         $at_template = COM_newTemplate(CTL_plugin_templatePath('autotags', 'admin'));
         $at_template->set_file('form', 'autotags.thtml');
+        $at_template->set_var('security_token', SEC_createToken());
 
         $at_template->set_var('start_block_editor',
             COM_startBlock($LANG_AUTO['autotagseditor']), '',
@@ -265,6 +266,8 @@ function listautotags()
     $form_arr = array(
         'bottom' => '<input type="hidden" name="tagenabler" value="1"'
                     . XHTML . '>'
+                    . '<input type="hidden" name="gl_token" value="'
+                    . SEC_createToken() . '"' . XHTML . '>'
     );
 
     $retval .= ADMIN_list ("autotags", "plugin_getListField_autotags", $header_arr, $text_arr,
@@ -289,7 +292,7 @@ function autotagseditor ($tag, $mode = '')
     $load_autotag = false;
     if (!empty($tag) && $mode == 'edit') {
         $load_autotag = true;
-        $query = DB_query("SELECT * FROM {$_TABLES['autotags']} WHERE tag = '$tag'");
+        $query = DB_query("SELECT * FROM {$_TABLES['autotags']} WHERE tag = '" . DB_escapeString($tag) . "'");
         $A = DB_fetchArray($query);
         // See if tag exists
         if (isset($A['tag'])) {
@@ -492,14 +495,16 @@ function changeTagStatus($enabledtags, $visibletags)
     $disabled = array_diff($visibletags, $enabledtags);
 
     // disable tags
-    $in = implode("', '", $disabled);
+    $disabled = array_filter((array) $disabled, 'is_string');
+    $in = implode("', '", array_map('DB_escapeString', $disabled));
     if (! empty($in)) {
         $sql = "UPDATE {$_TABLES['autotags']} SET is_enabled = 0 WHERE tag IN ('$in')";
         DB_query($sql);
     }
 
     // enable tags
-    $in = implode("', '", $enabledtags);
+    $enabledtags = array_filter((array) $enabledtags, 'is_string');
+    $in = implode("', '", array_map('DB_escapeString', $enabledtags));
     if (! empty($in)) {
         $sql = "UPDATE {$_TABLES['autotags']} SET is_enabled = 1 WHERE tag IN ('$in')";
         DB_query($sql);
@@ -512,7 +517,7 @@ $mode = Geeklog\Input::fRequest('mode', '');
 
 $tag = Geeklog\Input::fRequest('tag', '');
 
-if (isset($_POST['tagenabler'])) {
+if (isset($_POST['tagenabler']) && SEC_checkToken()) {
     $enabledtags = array();
     if (isset($_POST['enabledtags'])) {
         $enabledtags = $_POST['enabledtags'];
@@ -524,14 +529,14 @@ if (isset($_POST['tagenabler'])) {
     changeTagStatus($enabledtags, $visibletags);
 }
 
-if (($mode == $LANG_AUTO['delete']) && !empty ($LANG_AUTO['delete'])) {
+if (($mode == $LANG_AUTO['delete']) && !empty ($LANG_AUTO['delete']) && SEC_checkToken()) {
     DB_delete ($_TABLES['autotags'], 'tag', $tag,
             $_CONF['site_admin_url'] . '/plugins/autotags/index.php');
     exit;
 } else if ($mode == 'edit') {
     $display = autotagseditor($tag, $mode);
     $display = COM_createHTMLDocument($display, array('pagetitle' => $LANG_AUTO['autotagseditor']));
-} else if (($mode == $LANG_AUTO['save']) && !empty ($LANG_AUTO['save'])) {
+} else if (($mode == $LANG_AUTO['save']) && !empty ($LANG_AUTO['save']) && SEC_checkToken()) {
     $display = saveautotags($tag,
         Geeklog\Input::post('old_tag'),
         Geeklog\Input::post('description'),
