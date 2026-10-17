@@ -22,6 +22,18 @@ This is a roadmap, not a claim that the tasks below have been implemented or val
 
 **Acceptance:** each label targets exactly one control; no duplicate IDs in rendered markup; keyboard/assistive-technology interaction is correct; edit/save cycles preserve autotag content and permissions; no new PHP warnings or SQL errors.
 
+## Development progress — initial 1.2.0 security and editor batch (October 2026)
+
+- [x] Fix duplicate field ID in Denim, add explicit unique IDs and matching labels in default admin template.
+- [x] Add Geeklog one-time tokens to both editor templates and the bulk status form; require `SEC_checkToken()` before save/delete/bulk changes.
+- [x] Escape autotag identifiers in editor lookup and bulk status SQL queries.
+- [x] Initialize form state when editing a missing autotag, including the PHP-function flag.
+- [ ] Verify Geeklog 2.2.2 token handling on live forms, including inline checkbox submission, delete and expired-token reauthentication.
+- [ ] Run PHP syntax checks, static analysis, and functional tests before deployment; changes have been code-reviewed by inspection only.
+- [ ] Follow up with deeper permission/ownership controls, safe PHP evaluation review, and robust handling of rename/delete operations.
+
+**Scope:** Do not implement visitor view/click tracking. The usage-in-content inventory remains a planned post-1.2.0 feature.
+
 ## P1 — Modernize administration UI
 
 - [ ] Replace presentation tables and inline styling in admin templates with semantic, responsive markup and clear sections for tag definition, replacement, PHP settings and permissions.
