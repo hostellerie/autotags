@@ -1,5 +1,6 @@
 {start_block_editor}
 <form action="{site_admin_url}/plugins/autotags/index.php" method="post">
+    <input type="hidden" name="gl_token" value="{security_token}">
     <table border="0" cellspacing="0" cellpadding="3" width="100%">
       <tr>
           <td align="right" valign="top" style="white-space:nowrap;"><label for="autotags-tag">{lang_tag}:</label></td>
