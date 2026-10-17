@@ -295,10 +295,11 @@ function autotagseditor ($tag, $mode = '')
         $query = DB_query("SELECT * FROM {$_TABLES['autotags']} WHERE tag = '" . DB_escapeString($tag) . "'");
         $A = DB_fetchArray($query);
         // See if tag exists
-        if (isset($A['tag'])) {
+        if (is_array($A) && isset($A['tag'])) {
             $A['old_tag'] = $A['tag'];
         } else {
             $tag = '';
+            $load_autotag = false;
         }
     }
 
@@ -308,6 +309,7 @@ function autotagseditor ($tag, $mode = '')
         $A['replacement'] = '';
         $A['old_tag'] = '';
         $A['is_enabled'] = '0';
+        $A['is_function'] = '0';
         $A['close_tag'] = '0';
         $A['owner_id'] = $_USER['uid'];
         $A['perm_owner'] = 2;
@@ -322,7 +324,7 @@ function autotagseditor ($tag, $mode = '')
         SEC_setDefaultPermissions ($A, $_AUTO_CONF['default_autotag_permissions']);
     } elseif (!$load_autotag) {
         $A = $_POST;
-        $A['tag'] = COM_applyFilter($A['tag']);
+        $A['tag'] = COM_applyFilter(isset($A['tag']) ? $A['tag'] : '');
         if (!isset($A['perm_owner'])) $A['perm_owner'] = 0;
         if (!isset($A['perm_group'])) $A['perm_group'] = 0;
         if (!isset($A['perm_members'])) $A['perm_members'] = 0;
