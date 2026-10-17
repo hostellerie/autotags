@@ -6,11 +6,14 @@ Status: **planned** · Development branch: `develop_1.2.0` · Baseline: official
 
 Modernize the Autotags plugin for Geeklog 2.2.2 while preserving existing autotags, their replacement content and access permissions. Fix defects in the plugin at their source: **do not add Eclipse-specific workarounds**. Follow the project's no-patchwork principle: prefer small, maintainable, testable root-cause fixes.
 
+Scope decision (October 2026): **track stored autotag usage across content, not visitor views, clicks, impressions or traffic analytics**. Keep usage inventory in the planned post-1.2.0 milestone; no visitor-tracking instrumentation.
+
 This is a roadmap, not a claim that the tasks below have been implemented or validated. Keep version and release notes aligned with changes actually delivered.
 
 ## P0 — Restore reliable editing and correct form semantics
 
 - [ ] Reproduce and diagnose the failure to open/edit existing autotags when upgrading an installation from 1.1.0 to 1.1.4/1.2.0 on Geeklog 2.2.2. Record exact URL, response, PHP error log and theme independence before changing code.
+- [x] Correct the confirmed duplicate tag/description ID in Denim and add unique IDs plus matching labels to the default form (committed; live validation pending).
 - [ ] Fix form control identifiers **in Autotags** (`templates/default/admin/autotags.thtml` and any other delivered theme templates). Current default template contains `name="tag"` and `name="description"` but **no `id` attributes** on these inputs. Verify whether duplicate IDs are generated elsewhere in the rendered page. Introduce unique IDs (e.g. `autotags-tag` and `autotags-description`) and matching `<label for="...">` associations; check all other form controls for duplicate/missing IDs. Do not infer duplicate IDs in this source template where none exist.
 - [ ] Verify proper HTML escaping for user-editable tag, description, and replacement fields (including quotation marks, angle brackets, UTF-8 and PHP snippets), retaining exact saved replacement semantics.
 - [ ] Verify add/edit/save/cancel/delete, enable/disable, closed tags, HTML replacements and PHP replacements, including error and success messages.
